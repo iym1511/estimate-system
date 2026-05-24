@@ -45,10 +45,10 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
     import('html2canvas'),
   ]);
 
-  // iframe에 HTML 전체 문서를 렌더링
+  // iframe에 HTML 전체 문서를 렌더링 (높이를 충분히 크게 설정해 클리핑 방지)
   const iframe = document.createElement('iframe');
   iframe.style.cssText =
-    'position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:none;visibility:hidden;';
+    'position:fixed;left:-9999px;top:0;width:794px;height:5000px;border:none;visibility:hidden;';
   document.body.appendChild(iframe);
 
   const iDoc = iframe.contentDocument!;
@@ -56,22 +56,30 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
   iDoc.write(html);
   iDoc.close();
 
-  // 폰트/스타일 로딩 대기
-  await new Promise(r => setTimeout(r, 700));
+  // 폰트/스타일/레이아웃 로딩 대기
+  await new Promise(r => setTimeout(r, 1000));
 
   try {
+    const bodyH = iDoc.body.scrollHeight;
+
     const canvas = await html2canvas(iDoc.body, {
-      scale: 1.5,
+      scale: 2,                        // 해상도 향상
       useCORS: true,
       backgroundColor: '#ffffff',
+      width: 794,
+      height: bodyH,                   // 전체 콘텐츠 높이 명시
       windowWidth: 794,
+      windowHeight: bodyH,
+      scrollX: 0,
+      scrollY: 0,
       logging: false,
     });
 
     const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
     const pageW = 210;
     const pageH = 297;
-    const pageHpx = Math.floor(canvas.width * (pageH / pageW));
+    const pxPerMm = canvas.width / pageW;
+    const pageHpx = Math.floor(pageH * pxPerMm);
 
     let srcY = 0;
     let page = 0;
@@ -87,7 +95,8 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
       ctx.drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
 
       if (page > 0) pdf.addPage();
-      pdf.addImage(pc.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pageW, (sliceH / canvas.width) * pageW);
+      // PNG(무손실)으로 텍스트 선명도 유지
+      pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pageW, sliceH / pxPerMm);
 
       srcY += pageHpx;
       page++;
