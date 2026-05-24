@@ -39,20 +39,68 @@ function todayStr() {
   return new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
 }
 
-function openAndPrint(html: string) {
-  const win = window.open('', '_blank', 'width=850,height=980');
-  if (!win) {
-    alert('팝업이 차단되어 있습니다. 이 사이트의 팝업을 허용해 주세요.');
-    return;
+async function downloadPDF(html: string, filename: string): Promise<void> {
+  const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+    import('jspdf'),
+    import('html2canvas'),
+  ]);
+
+  // iframe에 HTML 전체 문서를 렌더링
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText =
+    'position:fixed;left:-9999px;top:0;width:794px;height:1123px;border:none;visibility:hidden;';
+  document.body.appendChild(iframe);
+
+  const iDoc = iframe.contentDocument!;
+  iDoc.open();
+  iDoc.write(html);
+  iDoc.close();
+
+  // 폰트/스타일 로딩 대기
+  await new Promise(r => setTimeout(r, 700));
+
+  try {
+    const canvas = await html2canvas(iDoc.body, {
+      scale: 1.5,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      windowWidth: 794,
+      logging: false,
+    });
+
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
+    const pageW = 210;
+    const pageH = 297;
+    const pageHpx = Math.floor(canvas.width * (pageH / pageW));
+
+    let srcY = 0;
+    let page = 0;
+
+    while (srcY < canvas.height) {
+      const sliceH = Math.min(pageHpx, canvas.height - srcY);
+      const pc = document.createElement('canvas');
+      pc.width = canvas.width;
+      pc.height = sliceH;
+      const ctx = pc.getContext('2d')!;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pc.width, pc.height);
+      ctx.drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+      if (page > 0) pdf.addPage();
+      pdf.addImage(pc.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pageW, (sliceH / canvas.width) * pageW);
+
+      srcY += pageHpx;
+      page++;
+    }
+
+    pdf.save(filename);
+  } finally {
+    document.body.removeChild(iframe);
   }
-  win.document.write(html);
-  win.document.close();
-  win.focus();
-  setTimeout(() => win.print(), 700);
 }
 
 /* ── 견적서 ─────────────────────────────────────────────────── */
-export function generateEstimatePDF(quotes: QuoteForPDF[], building: BuildingForPDF) {
+export async function generateEstimatePDF(quotes: QuoteForPDF[], building: BuildingForPDF): Promise<void> {
   const no = docNo();
   const total = quotes.reduce((s, q) => s + q.amount, 0);
 
@@ -136,11 +184,11 @@ export function generateEstimatePDF(quotes: QuoteForPDF[], building: BuildingFor
 </body>
 </html>`;
 
-  openAndPrint(html);
+  await downloadPDF(html, `견적서_${building.name}.pdf`);
 }
 
 /* ── 거래명세서 (엑셀 양식 기반) ────────────────────────────── */
-export function generateStatementPDF(quotes: QuoteForPDF[], building: BuildingForPDF) {
+export async function generateStatementPDF(quotes: QuoteForPDF[], building: BuildingForPDF): Promise<void> {
   const no = docNo();
   const total = quotes.reduce((s, q) => s + q.amount, 0);
 
@@ -270,5 +318,5 @@ export function generateStatementPDF(quotes: QuoteForPDF[], building: BuildingFo
 </body>
 </html>`;
 
-  openAndPrint(html);
+  await downloadPDF(html, `거래명세서_${building.name}.pdf`);
 }

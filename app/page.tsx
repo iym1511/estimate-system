@@ -270,6 +270,7 @@ export default function QuotesPage() {
   const [editingQuoteId, setEditingQuoteId] = useState<string | null>(null);
   const [editQuoteForm, setEditQuoteForm] = useState<Partial<Quote>>({});
   const [sortAsc, setSortAsc] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState<'estimate' | 'statement' | null>(null);
 
   const descRef = useRef<HTMLTextAreaElement>(null);
 
@@ -699,22 +700,36 @@ export default function QuotesPage() {
                           <span className="hidden sm:inline">{sortAsc ? '오래된순' : '최신순'}</span>
                         </button>
                         <button
-                          onClick={() => generateEstimatePDF(sortedQuotes, selectedBuilding)}
+                          onClick={async () => {
+                            setPdfLoading('estimate');
+                            try { await generateEstimatePDF(sortedQuotes, selectedBuilding); }
+                            catch { alert('PDF 생성 중 오류가 발생했습니다.'); }
+                            finally { setPdfLoading(null); }
+                          }}
+                          disabled={pdfLoading !== null}
                           title="견적서 PDF"
-                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0fdf8', border: '1px solid #c6f0de', color: '#24b47e', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s' }}
-                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#d4f7eb'; el.style.borderColor = '#3ecf8e'; }}
+                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0fdf8', border: '1px solid #c6f0de', color: '#24b47e', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: pdfLoading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s', opacity: pdfLoading ? 0.6 : 1 }}
+                          onMouseEnter={e => { if (!pdfLoading) { const el = e.currentTarget as HTMLElement; el.style.background = '#d4f7eb'; el.style.borderColor = '#3ecf8e'; } }}
                           onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0fdf8'; el.style.borderColor = '#c6f0de'; }}
                         >
-                          <FileText size={12} /><span className="hidden sm:inline">견적서</span>
+                          <FileText size={12} />
+                          <span className="hidden sm:inline">{pdfLoading === 'estimate' ? '생성 중…' : '견적서'}</span>
                         </button>
                         <button
-                          onClick={() => generateStatementPDF(sortedQuotes, selectedBuilding)}
+                          onClick={async () => {
+                            setPdfLoading('statement');
+                            try { await generateStatementPDF(sortedQuotes, selectedBuilding); }
+                            catch { alert('PDF 생성 중 오류가 발생했습니다.'); }
+                            finally { setPdfLoading(null); }
+                          }}
+                          disabled={pdfLoading !== null}
                           title="거래명세표 PDF"
-                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0f5ff', border: '1px solid #b5d5f5', color: '#3a7fd4', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s' }}
-                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#dbeafe'; el.style.borderColor = '#3a7fd4'; }}
+                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0f5ff', border: '1px solid #b5d5f5', color: '#3a7fd4', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: pdfLoading ? 'not-allowed' : 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s', opacity: pdfLoading ? 0.6 : 1 }}
+                          onMouseEnter={e => { if (!pdfLoading) { const el = e.currentTarget as HTMLElement; el.style.background = '#dbeafe'; el.style.borderColor = '#3a7fd4'; } }}
                           onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0f5ff'; el.style.borderColor = '#b5d5f5'; }}
                         >
-                          <Receipt size={12} /><span className="hidden sm:inline">명세표</span>
+                          <Receipt size={12} />
+<span className="hidden sm:inline">{pdfLoading === 'statement' ? '생성 중…' : '명세표'}</span>
                         </button>
                       </>
                     )}
