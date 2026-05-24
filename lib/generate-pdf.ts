@@ -45,7 +45,6 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
     import('html2canvas'),
   ]);
 
-  // iframe에 HTML 전체 문서를 렌더링 (높이를 충분히 크게 설정해 클리핑 방지)
   const iframe = document.createElement('iframe');
   iframe.style.cssText =
     'position:fixed;left:-9999px;top:0;width:794px;height:5000px;border:none;visibility:hidden;';
@@ -56,18 +55,17 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
   iDoc.write(html);
   iDoc.close();
 
-  // 폰트/스타일/레이아웃 로딩 대기
-  await new Promise(r => setTimeout(r, 1000));
+  await new Promise(r => setTimeout(r, 1200));
 
   try {
     const bodyH = iDoc.body.scrollHeight;
 
     const canvas = await html2canvas(iDoc.body, {
-      scale: 2,                        // 해상도 향상
+      scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
       width: 794,
-      height: bodyH,                   // 전체 콘텐츠 높이 명시
+      height: bodyH,
       windowWidth: 794,
       windowHeight: bodyH,
       scrollX: 0,
@@ -95,7 +93,6 @@ async function downloadPDF(html: string, filename: string): Promise<void> {
       ctx.drawImage(canvas, 0, srcY, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
 
       if (page > 0) pdf.addPage();
-      // PNG(무손실)으로 텍스트 선명도 유지
       pdf.addImage(pc.toDataURL('image/png'), 'PNG', 0, 0, pageW, sliceH / pxPerMm);
 
       srcY += pageHpx;
@@ -115,10 +112,10 @@ export async function generateEstimatePDF(quotes: QuoteForPDF[], building: Build
 
   const rows = quotes.map(q => `
     <tr>
-      <td class="c">${esc(q.room_number)}</td>
-      <td class="c">${q.work_date}</td>
-      <td>${esc(q.description)}${q.remarks ? `<br><span style="font-size:11px;color:#777">※ ${esc(q.remarks)}</span>` : ''}</td>
-      <td class="r">${fmt(q.amount)}</td>
+      <td style="text-align:center;padding:9px 10px;border:1px solid #bbb;vertical-align:top">${esc(q.room_number)}</td>
+      <td style="text-align:center;padding:9px 10px;border:1px solid #bbb;vertical-align:top;white-space:nowrap">${q.work_date}</td>
+      <td style="padding:9px 10px;border:1px solid #bbb;vertical-align:top">${esc(q.description)}${q.remarks ? `<br><span style="font-size:11px;color:#777">※ ${esc(q.remarks)}</span>` : ''}</td>
+      <td style="text-align:right;padding:9px 10px;border:1px solid #bbb;vertical-align:top;white-space:nowrap">${fmt(q.amount)}</td>
     </tr>`).join('');
 
   const html = `<!DOCTYPE html>
@@ -128,60 +125,67 @@ export async function generateEstimatePDF(quotes: QuoteForPDF[], building: Build
   <title>견적서</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;font-size:12px;color:#111;padding:52px 56px}
-    h1{text-align:center;font-size:30px;font-weight:700;letter-spacing:10px;margin-bottom:28px;padding-bottom:12px;border-bottom:2px solid #111}
-    .meta{display:flex;justify-content:flex-end;gap:20px;font-size:11px;color:#555;margin-bottom:20px}
-    .parties{display:grid;grid-template-columns:1fr 1fr;border:1px solid #999;margin-bottom:18px}
-    .party{padding:14px 16px}
-    .party+.party{border-left:1px solid #999}
-    .party-title{font-size:10px;font-weight:700;color:#fff;background:#333;padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px}
-    .party-row{display:flex;margin-bottom:5px;font-size:12px}
-    .party-label{width:68px;font-weight:600;color:#444;flex-shrink:0}
-    .amount-box{border:2px solid #111;padding:12px 20px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;background:#fafafa}
-    .amount-box .label{font-size:13px;font-weight:600}
-    .amount-box .value{font-size:22px;font-weight:700}
-    table{width:100%;border-collapse:collapse;margin-bottom:14px}
-    thead tr{background:#333;color:#fff}
-    th{padding:9px 12px;font-size:11px;font-weight:600;border:1px solid #555;text-align:center}
-    td{padding:10px 12px;border:1px solid #bbb;vertical-align:top}
-    .c{text-align:center}.r{text-align:right}
-    .note{font-size:11px;color:#555;margin-bottom:8px}
-    @media print{body{padding:20px 24px}@page{size:A4;margin:18mm}}
+    body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;font-size:12px;color:#111;padding:52px 56px;background:#fff}
   </style>
 </head>
 <body>
-  <h1>견 적 서</h1>
-  <div class="meta">
-    <span>문서번호: ${no}</span>
-    <span>작성일: ${todayStr()}</span>
+  <!-- 제목 -->
+  <div style="text-align:center;font-size:30px;font-weight:700;letter-spacing:10px;margin-bottom:28px;padding-bottom:12px;border-bottom:2px solid #111">견 적 서</div>
+
+  <!-- 문서번호/작성일 -->
+  <div style="text-align:right;font-size:11px;color:#555;margin-bottom:20px">
+    문서번호: ${no}&nbsp;&nbsp;&nbsp;작성일: ${todayStr()}
   </div>
 
-  <div class="parties">
-    <div class="party">
-      <span class="party-title">공급받는자</span>
-      <div class="party-row"><span class="party-label">현장명</span><span>${esc(building.name)}</span></div>
-      ${building.address ? `<div class="party-row"><span class="party-label">주소</span><span>${esc(building.address)}</span></div>` : ''}
-    </div>
-    <div class="party">
-      <span class="party-title">공급자</span>
-      <div class="party-row"><span class="party-label">상호</span><span>${esc(COMPANY.name)}</span></div>
-      <div class="party-row"><span class="party-label">대표자</span><span>${esc(COMPANY.representative)}</span></div>
-      <div class="party-row"><span class="party-label">연락처</span><span>${COMPANY.phone}</span></div>
-    </div>
-  </div>
+  <!-- 공급받는자 / 공급자 -->
+  <table style="width:100%;border-collapse:collapse;border:1px solid #999;margin-bottom:18px">
+    <tr>
+      <td style="width:50%;vertical-align:top;padding:14px 16px;border-right:1px solid #999">
+        <div style="font-size:10px;font-weight:700;color:#fff;background:#333;padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px">공급받는자</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <td style="width:68px;font-weight:600;color:#444;padding:4px 0;vertical-align:top;font-size:12px">현장명</td>
+            <td style="padding:4px 0;font-size:12px">${esc(building.name)}</td>
+          </tr>
+          ${building.address ? `<tr><td style="width:68px;font-weight:600;color:#444;padding:4px 0;vertical-align:top;font-size:12px">주소</td><td style="padding:4px 0;font-size:12px">${esc(building.address)}</td></tr>` : ''}
+        </table>
+      </td>
+      <td style="width:50%;vertical-align:top;padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:#fff;background:#333;padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:10px">공급자</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <td style="width:68px;font-weight:600;color:#444;padding:4px 0;font-size:12px">상호</td>
+            <td style="padding:4px 0;font-size:12px">${esc(COMPANY.name)}</td>
+          </tr>
+          <tr>
+            <td style="width:68px;font-weight:600;color:#444;padding:4px 0;font-size:12px">대표자</td>
+            <td style="padding:4px 0;font-size:12px">${esc(COMPANY.representative)}</td>
+          </tr>
+          <tr>
+            <td style="width:68px;font-weight:600;color:#444;padding:4px 0;font-size:12px">연락처</td>
+            <td style="padding:4px 0;font-size:12px">${COMPANY.phone}</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 
-  <div class="amount-box">
-    <span class="label">견&nbsp;&nbsp;적&nbsp;&nbsp;금&nbsp;&nbsp;액</span>
-    <span class="value">₩&nbsp;${fmt(total)}&nbsp;원</span>
-  </div>
+  <!-- 견적금액 -->
+  <table style="width:100%;border-collapse:collapse;border:2px solid #111;margin-bottom:18px;background:#fafafa">
+    <tr>
+      <td style="padding:12px 20px;font-size:13px;font-weight:600">견&nbsp;&nbsp;적&nbsp;&nbsp;금&nbsp;&nbsp;액</td>
+      <td style="padding:12px 20px;font-size:22px;font-weight:700;text-align:right">₩&nbsp;${fmt(total)}&nbsp;원</td>
+    </tr>
+  </table>
 
-  <table>
+  <!-- 품목 테이블 -->
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px">
     <thead>
-      <tr>
-        <th style="width:58px">호실</th>
-        <th style="width:100px">날짜</th>
-        <th>시공 내용</th>
-        <th style="width:120px">금액 (원)</th>
+      <tr style="background:#333;color:#fff">
+        <th style="width:58px;padding:9px 10px;border:1px solid #555;text-align:center;font-size:11px;font-weight:600">호실</th>
+        <th style="width:100px;padding:9px 10px;border:1px solid #555;text-align:center;font-size:11px;font-weight:600">날짜</th>
+        <th style="padding:9px 10px;border:1px solid #555;text-align:center;font-size:11px;font-weight:600">시공 내용</th>
+        <th style="width:120px;padding:9px 10px;border:1px solid #555;text-align:center;font-size:11px;font-weight:600">금액 (원)</th>
       </tr>
     </thead>
     <tbody>
@@ -189,27 +193,27 @@ export async function generateEstimatePDF(quotes: QuoteForPDF[], building: Build
     </tbody>
   </table>
 
-  <p class="note">※ 본 견적서는 발행일로부터 30일간 유효합니다.</p>
+  <p style="font-size:11px;color:#555">※ 본 견적서는 발행일로부터 30일간 유효합니다.</p>
 </body>
 </html>`;
 
   await downloadPDF(html, `견적서_${building.name}.pdf`);
 }
 
-/* ── 거래명세서 (엑셀 양식 기반) ────────────────────────────── */
+/* ── 거래명세서 ──────────────────────────────────────────────── */
 export async function generateStatementPDF(quotes: QuoteForPDF[], building: BuildingForPDF): Promise<void> {
   const no = docNo();
   const total = quotes.reduce((s, q) => s + q.amount, 0);
 
   const rows = quotes.map((q, i) => `
     <tr>
-      <td class="c">${i + 1}</td>
-      <td>${esc(q.description)}${q.remarks ? `<br><span style="font-size:10px;color:#666">※ ${esc(q.remarks)}</span>` : ''}</td>
-      <td class="c">${esc(q.room_number)}</td>
-      <td class="c">${q.work_date}</td>
-      <td class="c">1</td>
-      <td class="r">${fmt(q.amount)}</td>
-      <td class="r">${fmt(q.amount)}</td>
+      <td style="text-align:center;padding:6px 7px;border:1px solid #bbb;font-size:11px">${i + 1}</td>
+      <td style="padding:6px 7px;border:1px solid #bbb;font-size:11px">${esc(q.description)}${q.remarks ? `<br><span style="font-size:10px;color:#666">※ ${esc(q.remarks)}</span>` : ''}</td>
+      <td style="text-align:center;padding:6px 7px;border:1px solid #bbb;font-size:11px">${esc(q.room_number)}</td>
+      <td style="text-align:center;padding:6px 7px;border:1px solid #bbb;font-size:11px;white-space:nowrap">${q.work_date}</td>
+      <td style="text-align:center;padding:6px 7px;border:1px solid #bbb;font-size:11px">1</td>
+      <td style="text-align:right;padding:6px 7px;border:1px solid #bbb;font-size:11px;white-space:nowrap">${fmt(q.amount)}</td>
+      <td style="text-align:right;padding:6px 7px;border:1px solid #bbb;font-size:11px;white-space:nowrap">${fmt(q.amount)}</td>
     </tr>`).join('');
 
   const html = `<!DOCTYPE html>
@@ -219,107 +223,89 @@ export async function generateStatementPDF(quotes: QuoteForPDF[], building: Buil
   <title>거래명세서</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;font-size:11px;color:#000;padding:32px 40px}
-
-    /* ── 제목 ── */
-    h1{text-align:center;font-size:26px;font-weight:700;letter-spacing:12px;border-bottom:2.5px solid #000;padding-bottom:8px;margin-bottom:4px}
-    .docno{text-align:right;font-size:10px;color:#555;margin-bottom:10px}
-
-    /* ── 헤더 (거래처 + 공급자 2열) ── */
-    .hdr{display:grid;grid-template-columns:1fr 1fr;border:1px solid #000;margin-bottom:0}
-    .hdr-col{display:flex;flex-direction:column}
-    .hdr-col+.hdr-col{border-left:1px solid #000}
-    .hdr-band{background:#333;color:#fff;font-size:10px;font-weight:700;letter-spacing:4px;text-align:center;padding:4px 0}
-    .hdr-row{display:flex;border-top:1px solid #ccc;min-height:28px}
-    .hdr-lbl{background:#f2f2f2;font-weight:700;font-size:10px;padding:5px 8px;width:72px;flex-shrink:0;border-right:1px solid #ccc;display:flex;align-items:center;letter-spacing:1px}
-    .hdr-val{padding:5px 8px;font-size:11px;flex:1;display:flex;align-items:center;word-break:break-all}
-    /* 합계금액 행 강조 */
-    .hdr-total .hdr-lbl{background:#e8e8e8}
-    .hdr-total .hdr-val{font-size:15px;font-weight:700}
-
-    /* ── 품목 테이블 ── */
-    table{width:100%;border-collapse:collapse;border:1px solid #000;border-top:none;margin-bottom:0}
-    th{background:#e8e8e8;font-size:10px;font-weight:700;text-align:center;padding:6px 6px;border:1px solid #888;letter-spacing:1px;white-space:nowrap}
-    td{padding:6px 7px;border:1px solid #bbb;vertical-align:middle;font-size:11px}
-    .c{text-align:center}.r{text-align:right;font-variant-numeric:tabular-nums}
-
-    /* 합계 행 */
-    tr.sum-row td{background:#e8e8e8;font-weight:700;font-size:12px;border-top:2px solid #000}
-
-    @media print{body{padding:14px 18px}@page{size:A4;margin:10mm}}
+    body{font-family:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',sans-serif;font-size:11px;color:#000;padding:32px 40px;background:#fff}
   </style>
 </head>
 <body>
-  <h1>거 래 명 세 서</h1>
-  <div class="docno">문서번호: ${no}&nbsp;&nbsp;|&nbsp;&nbsp;발행일: ${todayStr()}</div>
+  <!-- 제목 -->
+  <div style="text-align:center;font-size:26px;font-weight:700;letter-spacing:12px;border-bottom:2.5px solid #000;padding-bottom:8px;margin-bottom:4px">거 래 명 세 서</div>
+  <div style="text-align:right;font-size:10px;color:#555;margin-bottom:10px">문서번호: ${no}&nbsp;&nbsp;|&nbsp;&nbsp;발행일: ${todayStr()}</div>
 
   <!-- 헤더: 공급받는자 / 공급자 -->
-  <div class="hdr">
-    <div class="hdr-col">
-      <div class="hdr-band">공 &nbsp; 급 &nbsp; 받 &nbsp; 는 &nbsp; 자</div>
-      <div class="hdr-row">
-        <div class="hdr-lbl">발 행 일</div>
-        <div class="hdr-val">${todayStr()}</div>
-      </div>
-      <div class="hdr-row" style="min-height:36px">
-        <div class="hdr-lbl">거래처명</div>
-        <div class="hdr-val" style="font-size:13px;font-weight:700">${esc(building.name)}</div>
-      </div>
-      ${building.address ? `
-      <div class="hdr-row">
-        <div class="hdr-lbl">주 &nbsp;&nbsp; 소</div>
-        <div class="hdr-val">${esc(building.address)}</div>
-      </div>` : ''}
-      <div class="hdr-row">
-        <div class="hdr-lbl">인수담당</div>
-        <div class="hdr-val">귀&nbsp;&nbsp;중</div>
-      </div>
-      <div class="hdr-row hdr-total">
-        <div class="hdr-lbl">합계금액</div>
-        <div class="hdr-val">₩&nbsp;${fmt(total)}&nbsp;원</div>
-      </div>
-    </div>
-    <div class="hdr-col">
-      <div class="hdr-band">공 &nbsp;&nbsp;&nbsp; 급 &nbsp;&nbsp;&nbsp; 자</div>
-      <div class="hdr-row">
-        <div class="hdr-lbl">상 &nbsp;&nbsp; 호</div>
-        <div class="hdr-val">${esc(COMPANY.name)}</div>
-      </div>
-      <div class="hdr-row">
-        <div class="hdr-lbl">대 표 자</div>
-        <div class="hdr-val">${esc(COMPANY.representative)}</div>
-      </div>
-      <div class="hdr-row">
-        <div class="hdr-lbl">연 락 처</div>
-        <div class="hdr-val">${COMPANY.phone}</div>
-      </div>
-      <div class="hdr-row" style="flex:1">
-        <div class="hdr-lbl">입금계좌</div>
-        <div class="hdr-val" style="font-size:10.5px">국민은행 122-21-0315-474<br>예금주: 문석권</div>
-      </div>
-    </div>
-  </div>
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;margin-bottom:0">
+    <tr>
+      <!-- 공급받는자 -->
+      <td style="width:50%;vertical-align:top;padding:0;border-right:1px solid #000">
+        <div style="background:#333;color:#fff;font-size:10px;font-weight:700;letter-spacing:4px;text-align:center;padding:5px 0">공 &nbsp; 급 &nbsp; 받 &nbsp; 는 &nbsp; 자</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">발 행 일</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">${todayStr()}</td>
+          </tr>
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">거래처명</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:13px;font-weight:700">${esc(building.name)}</td>
+          </tr>
+          ${building.address ? `
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">주 &nbsp;&nbsp; 소</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">${esc(building.address)}</td>
+          </tr>` : ''}
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">인수담당</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">귀&nbsp;&nbsp;중</td>
+          </tr>
+          <tr>
+            <td style="background:#e8e8e8;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">합계금액</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:15px;font-weight:700">₩&nbsp;${fmt(total)}&nbsp;원</td>
+          </tr>
+        </table>
+      </td>
+      <!-- 공급자 -->
+      <td style="width:50%;vertical-align:top;padding:0">
+        <div style="background:#333;color:#fff;font-size:10px;font-weight:700;letter-spacing:4px;text-align:center;padding:5px 0">공 &nbsp;&nbsp;&nbsp; 급 &nbsp;&nbsp;&nbsp; 자</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">상 &nbsp;&nbsp; 호</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">${esc(COMPANY.name)}</td>
+          </tr>
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">대 표 자</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">${esc(COMPANY.representative)}</td>
+          </tr>
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">연 락 처</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:11px">${COMPANY.phone}</td>
+          </tr>
+          <tr>
+            <td style="background:#f2f2f2;font-weight:700;font-size:10px;padding:6px 8px;width:72px;border-right:1px solid #ccc;border-top:1px solid #ccc;letter-spacing:1px;white-space:nowrap">입금계좌</td>
+            <td style="padding:6px 8px;border-top:1px solid #ccc;font-size:10px">국민은행 122-21-0315-474<br>예금주: 문석권</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 
   <!-- 품목 테이블 -->
-  <table>
+  <table style="width:100%;border-collapse:collapse;border:1px solid #000;border-top:none">
     <thead>
-      <tr>
-        <th style="width:34px">No</th>
-        <th>품&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;명</th>
-        <th style="width:64px">호실</th>
-        <th style="width:90px">날짜</th>
-        <th style="width:44px">수&nbsp;량</th>
-        <th style="width:100px">단&nbsp;&nbsp;가</th>
-        <th style="width:110px">공 급 가 액</th>
+      <tr style="background:#e8e8e8">
+        <th style="width:34px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">No</th>
+        <th style="padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px">품&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;명</th>
+        <th style="width:64px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">호실</th>
+        <th style="width:90px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">날짜</th>
+        <th style="width:44px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">수&nbsp;량</th>
+        <th style="width:100px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">단&nbsp;&nbsp;가</th>
+        <th style="width:110px;padding:6px;border:1px solid #888;font-size:10px;font-weight:700;text-align:center;letter-spacing:1px;white-space:nowrap">공 급 가 액</th>
       </tr>
     </thead>
     <tbody>
       ${rows}
     </tbody>
     <tfoot>
-      <tr class="sum-row">
-        <td colspan="6" class="r" style="letter-spacing:2px">합 &nbsp; 계</td>
-        <td class="r">${fmt(total)}</td>
+      <tr>
+        <td colspan="6" style="text-align:right;padding:7px 10px;border:1px solid #bbb;background:#e8e8e8;font-weight:700;font-size:12px;letter-spacing:2px;border-top:2px solid #000">합 &nbsp; 계</td>
+        <td style="text-align:right;padding:7px 10px;border:1px solid #bbb;background:#e8e8e8;font-weight:700;font-size:12px;border-top:2px solid #000;white-space:nowrap">${fmt(total)}</td>
       </tr>
     </tfoot>
   </table>
