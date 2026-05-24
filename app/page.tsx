@@ -163,7 +163,7 @@ function QuoteFormPanel({
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2" style={{ gap: 12, marginBottom: 12 }}>
         <div>
           <Label>호실</Label>
           <input
@@ -201,7 +201,7 @@ function QuoteFormPanel({
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+      <div className="grid grid-cols-1 min-[480px]:grid-cols-2" style={{ gap: 12, marginBottom: 16 }}>
         <div>
           <Label>금액 (원)</Label>
           <input
@@ -614,31 +614,31 @@ export default function QuotesPage() {
                 {/* 통계 행 */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
                   {/* 총 금액 */}
-                  <div style={{ padding: '14px 20px', borderRight: '1px solid #f0f0f0' }}>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 7 }}>총 금액</p>
-                    <p style={{ fontSize: 18, fontWeight: 700, color: '#171717', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  <div style={{ padding: 'clamp(10px,2vw,14px) clamp(10px,3vw,20px)', borderRight: '1px solid #f0f0f0' }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>총 금액</p>
+                    <p style={{ fontSize: 'clamp(13px,3vw,18px)', fontWeight: 700, color: '#171717', fontVariantNumeric: 'tabular-nums', lineHeight: 1, wordBreak: 'break-all' }}>
                       {totalAmount.toLocaleString()}
-                      <span style={{ fontSize: 11, fontWeight: 500, color: '#c0c0c0', marginLeft: 3 }}>원</span>
+                      <span style={{ fontSize: 10, fontWeight: 500, color: '#c0c0c0', marginLeft: 2 }}>원</span>
                     </p>
                   </div>
                   {/* 정산 완료 */}
-                  <div style={{ padding: '14px 20px', borderRight: '1px solid #f0f0f0' }}>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 7 }}>정산 완료</p>
-                    <p style={{ fontSize: 18, fontWeight: 700, color: '#24b47e', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  <div style={{ padding: 'clamp(10px,2vw,14px) clamp(10px,3vw,20px)', borderRight: '1px solid #f0f0f0' }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>정산 완료</p>
+                    <p style={{ fontSize: 'clamp(13px,3vw,18px)', fontWeight: 700, color: '#24b47e', fontVariantNumeric: 'tabular-nums', lineHeight: 1, wordBreak: 'break-all' }}>
                       {paidAmount.toLocaleString()}
-                      <span style={{ fontSize: 11, fontWeight: 500, color: '#c0c0c0', marginLeft: 3 }}>원</span>
+                      <span style={{ fontSize: 10, fontWeight: 500, color: '#c0c0c0', marginLeft: 2 }}>원</span>
                     </p>
-                    <div style={{ marginTop: 8, height: 3, background: '#f0f0f0', borderRadius: 99, overflow: 'hidden' }}>
+                    <div style={{ marginTop: 7, height: 3, background: '#f0f0f0', borderRadius: 99, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${paidRatio}%`, background: '#3ecf8e', borderRadius: 99, transition: 'width 0.6s ease' }} />
                     </div>
-                    <p style={{ fontSize: 10, color: '#b2b2b2', marginTop: 4, fontWeight: 700 }}>{Math.round(paidRatio)}%</p>
+                    <p style={{ fontSize: 10, color: '#b2b2b2', marginTop: 3, fontWeight: 700 }}>{Math.round(paidRatio)}%</p>
                   </div>
                   {/* 미정산 */}
-                  <div style={{ padding: '14px 20px', background: unpaidAmount > 0 ? '#fff9f7' : undefined }}>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 7 }}>미정산</p>
-                    <p style={{ fontSize: 18, fontWeight: 700, color: unpaidAmount > 0 ? '#d94f2a' : '#c0c0c0', fontVariantNumeric: 'tabular-nums', lineHeight: 1 }}>
+                  <div style={{ padding: 'clamp(10px,2vw,14px) clamp(10px,3vw,20px)', background: unpaidAmount > 0 ? '#fff9f7' : undefined }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>미정산</p>
+                    <p style={{ fontSize: 'clamp(13px,3vw,18px)', fontWeight: 700, color: unpaidAmount > 0 ? '#d94f2a' : '#c0c0c0', fontVariantNumeric: 'tabular-nums', lineHeight: 1, wordBreak: 'break-all' }}>
                       {unpaidAmount.toLocaleString()}
-                      <span style={{ fontSize: 11, fontWeight: 500, color: '#c0c0c0', marginLeft: 3 }}>원</span>
+                      <span style={{ fontSize: 10, fontWeight: 500, color: '#c0c0c0', marginLeft: 2 }}>원</span>
                     </p>
                   </div>
                 </div>
@@ -676,7 +676,7 @@ export default function QuotesPage() {
               {/* 시공 내역 테이블 */}
               <div style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 'clamp(280px, 57vh, 540px)' }}>
                 {/* 테이블 헤더 */}
-                <div style={{ padding: '13px 18px', borderBottom: '1px solid #f0f0f0', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+                <div style={{ padding: '11px 16px', borderBottom: '1px solid #f0f0f0', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', flexShrink: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <TrendingUp size={14} style={{ color: '#3ecf8e' }} />
                     <span style={{ fontSize: 14, fontWeight: 700, color: '#171717' }}>시공 내역</span>
@@ -686,17 +686,37 @@ export default function QuotesPage() {
                       </span>
                     )}
                   </div>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
                     {quotes.length > 0 && (
-                      <button
-                        onClick={() => setSortAsc(p => !p)}
-                        style={{ height: 30, padding: '0 10px', borderRadius: 6, border: '1px solid #e8e8e8', background: '#fff', color: '#707070', fontWeight: 600, fontSize: 11, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'all 0.15s' }}
-                        onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#f5f5f5'; el.style.borderColor = '#d0d0d0'; }}
-                        onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#fff'; el.style.borderColor = '#e8e8e8'; }}
-                      >
-                        {sortAsc ? <ArrowUp size={11} /> : <ArrowDown size={11} />}
-                        {sortAsc ? '오래된순' : '최신순'}
-                      </button>
+                      <>
+                        <button
+                          onClick={() => setSortAsc(p => !p)}
+                          style={{ height: 30, padding: '0 8px', borderRadius: 6, border: '1px solid #e8e8e8', background: '#fff', color: '#707070', fontWeight: 600, fontSize: 11, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'all 0.15s' }}
+                          onMouseEnter={e => { const el = e.currentTarget; el.style.background = '#f5f5f5'; el.style.borderColor = '#d0d0d0'; }}
+                          onMouseLeave={e => { const el = e.currentTarget; el.style.background = '#fff'; el.style.borderColor = '#e8e8e8'; }}
+                        >
+                          {sortAsc ? <ArrowUp size={11} /> : <ArrowDown size={11} />}
+                          <span className="hidden sm:inline">{sortAsc ? '오래된순' : '최신순'}</span>
+                        </button>
+                        <button
+                          onClick={() => generateEstimatePDF(sortedQuotes, selectedBuilding)}
+                          title="견적서 PDF"
+                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0fdf8', border: '1px solid #c6f0de', color: '#24b47e', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s' }}
+                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#d4f7eb'; el.style.borderColor = '#3ecf8e'; }}
+                          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0fdf8'; el.style.borderColor = '#c6f0de'; }}
+                        >
+                          <FileText size={12} /><span className="hidden sm:inline">견적서</span>
+                        </button>
+                        <button
+                          onClick={() => generateStatementPDF(sortedQuotes, selectedBuilding)}
+                          title="거래명세표 PDF"
+                          style={{ height: 30, padding: '0 10px', borderRadius: 6, background: '#f0f5ff', border: '1px solid #b5d5f5', color: '#3a7fd4', display: 'inline-flex', alignItems: 'center', gap: 4, cursor: 'pointer', fontSize: 11, fontWeight: 700, transition: 'all 0.15s' }}
+                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#dbeafe'; el.style.borderColor = '#3a7fd4'; }}
+                          onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0f5ff'; el.style.borderColor = '#b5d5f5'; }}
+                        >
+                          <Receipt size={12} /><span className="hidden sm:inline">명세표</span>
+                        </button>
+                      </>
                     )}
                     {!isAddingQuote && !editingQuoteId && (
                       <button
@@ -713,7 +733,7 @@ export default function QuotesPage() {
 
                 {/* 테이블 스크롤 영역 */}
                 <ScrollArea className="flex-1">
-                  <table className="w-full caption-bottom text-sm">
+                  <table className="caption-bottom text-sm" style={{ width: '100%', minWidth: 680 }}>
                     <TableHeader className="sticky top-0 z-10 bg-[#fafafa]">
                       <TableRow className="hover:bg-transparent" style={{ background: '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
                         <TableHead style={{ padding: '0 16px', height: 36, fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.06em', width: 72, background: '#fafafa' }}>호실</TableHead>
@@ -721,7 +741,7 @@ export default function QuotesPage() {
                         <TableHead style={{ padding: '0 16px', height: 36, fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.06em', background: '#fafafa' }}>시공 내용</TableHead>
                         <TableHead style={{ padding: '0 16px', height: 36, fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.06em', width: 120, textAlign: 'right', background: '#fafafa' }}>금액 (원)</TableHead>
                         <TableHead style={{ padding: '0 16px', height: 36, fontSize: 10, fontWeight: 700, color: '#b2b2b2', textTransform: 'uppercase', letterSpacing: '0.06em', width: 72, textAlign: 'center', background: '#fafafa' }}>정산</TableHead>
-                        <TableHead style={{ width: 88, background: '#fafafa' }} />
+                        <TableHead style={{ width: 72, background: '#fafafa' }} />
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -743,7 +763,7 @@ export default function QuotesPage() {
                               <TableCell style={{ padding: '14px 16px', fontSize: 12, fontWeight: 500, color: '#9a9a9a', verticalAlign: 'top', whiteSpace: 'nowrap' }}>
                                 {q.work_date}
                               </TableCell>
-                              <TableCell style={{ padding: '14px 16px', verticalAlign: 'top', maxWidth: 360 }}>
+                              <TableCell style={{ padding: '14px 16px', verticalAlign: 'top' }}>
                                 <p style={{ fontSize: 13, fontWeight: 500, color: '#171717', whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.65 }}>
                                   {q.description}
                                 </p>
@@ -771,27 +791,7 @@ export default function QuotesPage() {
                                 </button>
                               </TableCell>
                               <TableCell style={{ padding: '10px 8px', verticalAlign: 'top' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-                                  {/* 견적서 */}
-                                  <button
-                                    onClick={() => generateEstimatePDF(q, selectedBuilding)}
-                                    title="견적서 PDF"
-                                    style={{ height: 28, borderRadius: 6, background: '#f0fdf8', border: '1px solid #c6f0de', color: '#24b47e', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 3, cursor: 'pointer', fontSize: 10, fontWeight: 700, transition: 'all 0.15s', padding: '0 4px' }}
-                                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#d4f7eb'; el.style.borderColor = '#3ecf8e'; }}
-                                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0fdf8'; el.style.borderColor = '#c6f0de'; }}
-                                  >
-                                    <FileText size={11} />견적
-                                  </button>
-                                  {/* 거래명세표 */}
-                                  <button
-                                    onClick={() => generateStatementPDF(q, selectedBuilding)}
-                                    title="거래명세표 PDF"
-                                    style={{ height: 28, borderRadius: 6, background: '#f0f5ff', border: '1px solid #b5d5f5', color: '#3a7fd4', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 3, cursor: 'pointer', fontSize: 10, fontWeight: 700, transition: 'all 0.15s', padding: '0 4px' }}
-                                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#dbeafe'; el.style.borderColor = '#3a7fd4'; }}
-                                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f0f5ff'; el.style.borderColor = '#b5d5f5'; }}
-                                  >
-                                    <Receipt size={11} />명세
-                                  </button>
+                                <div style={{ display: 'flex', gap: 3 }}>
                                   {/* 수정 */}
                                   <button
                                     onClick={() => {
@@ -807,7 +807,7 @@ export default function QuotesPage() {
                                       setIsAddingQuote(false);
                                     }}
                                     title="수정"
-                                    style={{ height: 28, borderRadius: 6, background: '#f7f7f7', border: '1px solid #e0e0e0', color: '#707070', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
+                                    style={{ width: 30, height: 28, borderRadius: 6, background: '#f7f7f7', border: '1px solid #e0e0e0', color: '#707070', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
                                     onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#eaeaea'; el.style.borderColor = '#bbb'; }}
                                     onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#f7f7f7'; el.style.borderColor = '#e0e0e0'; }}
                                   >
@@ -817,7 +817,7 @@ export default function QuotesPage() {
                                   <button
                                     onClick={() => handleDeleteQuote(q.id)}
                                     title="삭제"
-                                    style={{ height: 28, borderRadius: 6, background: '#fff1f0', border: '1px solid #fcd4cf', color: '#d94f2a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
+                                    style={{ width: 30, height: 28, borderRadius: 6, background: '#fff1f0', border: '1px solid #fcd4cf', color: '#d94f2a', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s' }}
                                     onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#fdddd6'; el.style.borderColor = '#d94f2a'; }}
                                     onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = '#fff1f0'; el.style.borderColor = '#fcd4cf'; }}
                                   >

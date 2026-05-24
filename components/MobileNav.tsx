@@ -18,7 +18,8 @@ export default function MobileNav() {
       style={{
         background: '#ffffff',
         borderTop: '1px solid #e8e8e8',
-        height: 60,
+        height: 'calc(60px + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
       {links.map(({ href, label, icon: Icon }) => {

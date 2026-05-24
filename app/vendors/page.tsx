@@ -345,7 +345,7 @@ export default function VendorsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
         {/* 업체 */}
-        <div className="lg:col-span-3 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, height: 'clamp(300px, 60vh, 600px)' }}>
+        <div className="col-panel lg:col-span-3 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10 }}>
           <ColHeader icon={Briefcase} title="업체" count={vendors.length} onAdd={() => setAddingVendor(!addingVendor)} isAddOpen={addingVendor} />
           {addingVendor && (
             <AddForm onSave={() => { if (newVendor.company_name) addVendorMutation.mutate(newVendor.company_name); }} saveLabel="업체 등록">
@@ -425,7 +425,7 @@ export default function VendorsPage() {
         </div>
 
         {/* 직원 */}
-        <div className="lg:col-span-3 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, height: 'clamp(300px, 60vh, 600px)' }}>
+        <div className="col-panel lg:col-span-3 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10 }}>
           <ColHeader icon={Users} title="직원" count={employees.length} onAdd={selectedVendorId ? () => setAddingEmployee(!addingEmployee) : undefined} isAddOpen={addingEmployee} />
           {!selectedVendorId ? (
             <ColEmpty icon={Briefcase} lines={['업체를 먼저', '선택해주세요']} />
@@ -524,7 +524,7 @@ export default function VendorsPage() {
         </div>
 
         {/* 담당 현장 */}
-        <div className="lg:col-span-6 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, height: 'clamp(300px, 60vh, 600px)' }}>
+        <div className="col-panel lg:col-span-6 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10 }}>
           <ColHeader icon={Building} title="담당 현장" count={buildings.length} onAdd={selectedEmployeeId ? () => setAddingBuilding(!addingBuilding) : undefined} isAddOpen={addingBuilding} onSort={buildings.length > 0 ? () => setSortBuildingsAsc(p => !p) : undefined} sortAsc={sortBuildingsAsc} />
           {!selectedEmployeeId ? (
             <ColEmpty icon={Users} lines={['직원을 선택하면', '담당 현장이 표시됩니다']} />

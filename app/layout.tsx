@@ -13,8 +13,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "견적마스터",
+  title: "그린설비",
   description: "도배 및 집수리 견적 관리 전문 시스템",
+  other: { 'apple-mobile-web-app-capable': 'yes' },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({
@@ -42,12 +49,12 @@ export default function RootLayout({
                 >
                   <span style={{ fontSize: 10, fontWeight: 900, color: '#171717', letterSpacing: '-0.5px' }}>QM</span>
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.2px' }}>견적마스터</span>
+                <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.2px' }}>그린설비</span>
               </div>
             </header>
 
             {/* 콘텐츠 — 모바일에서 하단 탭바 높이(64px)만큼 패딩 */}
-            <main className="flex-1 overflow-y-auto p-5 pb-20 md:p-8">
+            <main className="flex-1 overflow-y-auto p-5 md:p-8" style={{ paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))' }}>
               <Providers>{children}</Providers>
             </main>
           </div>
