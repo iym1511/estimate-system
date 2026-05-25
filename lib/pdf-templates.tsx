@@ -185,8 +185,8 @@ export function EstimateDocument({ quotes, building }: { quotes: QuoteForPDF[]; 
                 </View>
                 {/* 시공내용: 좌측 상단 정렬 (멀티라인) */}
                 <View style={eBody(null, false, isLastRow, 'left')}>
-                  <Text style={{ lineHeight: 0.5 }}>{br(q.description)}</Text>
-                  {q.remarks ? <Text style={{ fontSize: 8, color: '#888', marginTop: 3, lineHeight: 0.5 }}>※ {q.remarks}</Text> : null}
+                  <Text style={{ lineHeight: 0.65 }}>{br(q.description)}</Text>
+                  {q.remarks ? <Text style={{ fontSize: 8, color: '#888', marginTop: 3, lineHeight: 0.65 }}>※ {q.remarks}</Text> : null}
                 </View>
                 {/* 금액: 세로 중앙 + 우측 정렬 */}
                 <View style={eBody(92, true, isLastRow, 'right')}>
@@ -332,8 +332,8 @@ export function StatementDocument({ quotes, building }: { quotes: QuoteForPDF[];
                 </View>
                 {/* 품명: 좌측 상단 (멀티라인) */}
                 <View style={sBody(null, false, isLastRow, 'left')}>
-                  <Text style={{ lineHeight: 0.5 }}>{br(q.description)}</Text>
-                  {q.remarks ? <Text style={{ fontSize: 8, color: '#777', marginTop: 2, lineHeight: 0.5 }}>※ {q.remarks}</Text> : null}
+                  <Text style={{ lineHeight: 0.65 }}>{br(q.description)}</Text>
+                  {q.remarks ? <Text style={{ fontSize: 8, color: '#777', marginTop: 2, lineHeight: 0.65 }}>※ {q.remarks}</Text> : null}
                 </View>
                 {/* 호실: 중앙 */}
                 <View style={sBody(60, false, isLastRow, 'center')}>
