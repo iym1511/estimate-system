@@ -412,7 +412,7 @@ export default function QuotesPage() {
   );
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', minWidth: 0 }}>
 
       {/* 페이지 헤더 */}
       <div style={{ marginBottom: 20, paddingBottom: 20, borderBottom: '1px solid #e8e8e8' }}>
@@ -423,7 +423,7 @@ export default function QuotesPage() {
       </div>
 
       {/* 메인 2-컬럼 */}
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-4" style={{ overflow: 'hidden' }}>
 
         {/* ── 왼쪽: 건물 목록 패널 ───────────────── */}
         <div className="building-panel">
@@ -562,7 +562,7 @@ export default function QuotesPage() {
         </div>
 
         {/* ── 오른쪽: 컨텐츠 영역 ─────────────────── */}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ flex: 1, minWidth: 0, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: 14 }}>
 
           {!selectedBuilding ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', background: '#fff', border: '1px dashed #ddd', borderRadius: 10, textAlign: 'center', minHeight: 300 }}>
@@ -746,8 +746,8 @@ export default function QuotesPage() {
                   </div>
                 </div>
 
-                {/* 테이블 스크롤 영역 */}
-                <ScrollArea className="flex-1">
+                {/* 테이블 스크롤 영역 — 가로·세로 모두 네이티브 스크롤 */}
+                <div className="flex-1 overflow-auto" style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}>
                   <table className="caption-bottom text-sm" style={{ width: '100%', minWidth: 680 }}>
                     <TableHeader className="sticky top-0 z-10 bg-[#fafafa]">
                       <TableRow className="hover:bg-transparent" style={{ background: '#fafafa', borderBottom: '1px solid #f0f0f0' }}>
@@ -857,7 +857,7 @@ export default function QuotesPage() {
                       )}
                     </TableBody>
                   </table>
-                </ScrollArea>
+                </div>
 
                 {/* 테이블 푸터 */}
                 {quotes.length > 0 && (

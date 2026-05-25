@@ -342,7 +342,7 @@ export default function VendorsPage() {
       </div>
 
       {/* 3-컬럼 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4" style={{ overflow: 'hidden' }}>
 
         {/* 업체 */}
         <div className="col-panel lg:col-span-3 flex flex-col overflow-hidden" style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10 }}>

@@ -34,7 +34,7 @@ export default function Navigation() {
           <span style={{ fontSize: 10, fontWeight: 900, color: '#171717', letterSpacing: '-0.5px' }}>QM</span>
         </div>
         <div>
-          <p style={{ fontSize: 13, fontWeight: 600, color: '#171717', lineHeight: 1.2, letterSpacing: '-0.2px' }}>견적마스터</p>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#171717', lineHeight: 1.2, letterSpacing: '-0.2px' }}>그린설비</p>
           <p style={{ fontSize: 10, color: '#9a9a9a', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: 1 }}>Repair Admin</p>
         </div>
       </div>
