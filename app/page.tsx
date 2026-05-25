@@ -675,7 +675,7 @@ export default function QuotesPage() {
               )}
 
               {/* 시공 내역 테이블 */}
-              <div style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 'clamp(280px, 57vh, 540px)' }}>
+              <div style={{ background: '#fff', border: '1px solid #e8e8e8', borderRadius: 10, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 'clamp(340px, 62vh, 600px)' }}>
                 {/* 테이블 헤더 */}
                 <div style={{ padding: '11px 16px', borderBottom: '1px solid #f0f0f0', background: '#fafafa', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', flexShrink: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
