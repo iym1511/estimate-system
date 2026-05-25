@@ -703,7 +703,7 @@ export default function QuotesPage() {
                           onClick={async () => {
                             setPdfLoading('estimate');
                             try { await generateEstimatePDF(sortedQuotes, selectedBuilding); }
-                            catch { alert('PDF 생성 중 오류가 발생했습니다.'); }
+                            catch (e) { console.error('견적서 PDF 오류:', e); alert('PDF 생성 중 오류가 발생했습니다.\n' + (e instanceof Error ? e.message : String(e))); }
                             finally { setPdfLoading(null); }
                           }}
                           disabled={pdfLoading !== null}
@@ -719,7 +719,7 @@ export default function QuotesPage() {
                           onClick={async () => {
                             setPdfLoading('statement');
                             try { await generateStatementPDF(sortedQuotes, selectedBuilding); }
-                            catch { alert('PDF 생성 중 오류가 발생했습니다.'); }
+                            catch (e) { console.error('명세표 PDF 오류:', e); alert('PDF 생성 중 오류가 발생했습니다.\n' + (e instanceof Error ? e.message : String(e))); }
                             finally { setPdfLoading(null); }
                           }}
                           disabled={pdfLoading !== null}
