@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -27,12 +28,7 @@ export default function Navigation() {
         className="flex items-center gap-2.5 px-5"
         style={{ height: 56, borderBottom: '1px solid #f0f0f0' }}
       >
-        <div
-          className="flex items-center justify-center shrink-0"
-          style={{ width: 28, height: 28, background: '#3ecf8e', borderRadius: 7 }}
-        >
-          <span style={{ fontSize: 10, fontWeight: 900, color: '#171717', letterSpacing: '-0.5px' }}>QM</span>
-        </div>
+        <Image src="/favicon.svg" alt="그린설비" width={28} height={28} style={{ borderRadius: 7 }} />
         <div>
           <p style={{ fontSize: 13, fontWeight: 600, color: '#171717', lineHeight: 1.2, letterSpacing: '-0.2px' }}>그린설비</p>
           <p style={{ fontSize: 10, color: '#9a9a9a', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', marginTop: 1 }}>Repair Admin</p>

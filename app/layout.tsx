@@ -4,7 +4,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import MobileNav from "@/components/MobileNav";
 import { cn } from "@/lib/utils";
-import { Wrench } from "lucide-react";
+import Image from "next/image";
 import { Providers } from "./providers";
 
 const inter = Inter({
@@ -16,6 +16,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "그린설비",
   description: "도배 및 집수리 견적 관리 전문 시스템",
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   other: { 'apple-mobile-web-app-capable': 'yes' },
 };
 
@@ -44,12 +49,7 @@ export default function RootLayout({
             {/* 모바일 헤더 — sticky로 스크롤 시에도 고정 */}
             <header className="md:hidden sticky top-0 z-50 bg-white border-b border-[#e8e8e8] px-5 h-14 flex items-center shrink-0">
               <div className="flex items-center gap-2.5">
-                <div
-                  className="h-7 w-7 flex items-center justify-center"
-                  style={{ background: '#3ecf8e', borderRadius: 6 }}
-                >
-                  <Wrench size={14} color="#171717" strokeWidth={2.5} />
-                </div>
+                <Image src="/favicon.svg" alt="그린설비" width={28} height={28} style={{ borderRadius: 6 }} />
                 <span style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.2px' }}>그린설비</span>
               </div>
             </header>
